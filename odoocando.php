@@ -29,14 +29,12 @@ function inputs($months, $intervall)
 
     // month start
     $year = readLine("$intervall year [$year_min,$year_max]: ");
-    readline_add_history($year);
     if ($year<$year_min || $year>$year_max) {
         exit("error - wrong year input \n");
     }
 
     // month start
     $month = readLine("$intervall month [1,12]: ");
-    readline_add_history($month);
     if (!in_array($month, $months)) {
         exit("error - wrong month input \n");
     }
@@ -49,7 +47,6 @@ function inputs($months, $intervall)
 
     // day start
     $day = readLine("$intervall day [1,$max_day]: ");
-    readline_add_history($day);
 
     if (!in_array($day, $days)) {
         exit("error - wrong day input \n");
@@ -64,19 +61,33 @@ function inputs($months, $intervall)
 
 // name
 $name = readLine("your name: ");
-readline_add_history($name);
 $start_input = inputs($months, 'start');
+$end_input = inputs($months, 'end');
+
+// debugs
 // $start_input = [
 //     'year' => 2020,
 //     'month' => 5,
 //     'day' => 14,
 // ];
-$end_input = inputs($months, 'end');
 // $end_input = [
 //     'year' => 2020,
 //     'month' => 5,
 //     'day' => 31,
 // ];
+
+$excludeDays = [];
+$i=1;
+echo "note: weekends are excluded automatically.\n";
+$excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/n): ");
+while ($excludeDaysYesNo == 'y') {
+    $inputToExclude = inputs($months, "$i. exclusion: ");
+    $dayToExclude = new DateTime();
+    $dayToExclude->setDate($inputToExclude['year'], $inputToExclude['month'], $inputToExclude['day']);
+    $excludeDays[] = $dayToExclude->format("Y-m-d");
+    $excludeDaysYesNo = readLine("do you want to exclude another day (y/n): ");
+    $i=$i+1;
+}
 
 $begin = new DateTime();
 $begin->setDate($start_input['year'], $start_input['month'], $start_input['day']);
@@ -95,7 +106,13 @@ $row = 2;
 
 foreach ($period as $dt) {
 
+    // exclude weekends
     if($dt->format('N') >= 6) {
+        continue;
+    }
+
+    // exclude personal excludes
+    if(in_array($dt->format("Y-m-d"), $excludeDays)) {
         continue;
     }
 
