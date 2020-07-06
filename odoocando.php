@@ -5,6 +5,7 @@ require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+include 'api/vacations.php';
 
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
@@ -24,6 +25,8 @@ for ($i=0; $i < 12; $i++) {
 
 function inputs($months, $intervall)
 {
+    // setup connector
+
     $year_min = 1900;
     $year_max = 2100;
 
@@ -103,6 +106,7 @@ $interval = DateInterval::createFromDateString('1 day');
 $period = new DatePeriod($begin, $interval, $end);
 
 $row = 2;
+$connector = LPLib_Feiertage_Connector::getInstance();
 
 foreach ($period as $dt) {
 
@@ -116,6 +120,11 @@ foreach ($period as $dt) {
         continue;
     }
 
+    $possibleVacation = $dt->format("Y-m-d");
+    if($connector->isFeiertagInLand($possibleVacation, LPLib_Feiertage_Connector::LAND_BRANDENBURG)) {
+        echo "\n\nskipped vacation at $possibleVacation\n\n";
+        continue;
+    }
     $begin_work = clone $dt;
     $begin_work->setTime(rand(7,9), rand(1,59), rand(1,59));
 
