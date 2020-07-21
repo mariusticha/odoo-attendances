@@ -14,4 +14,8 @@ use composer to install PhpSpreadsheet into your project:
 
 *run script*
 
-`php odoocando.php`
+`php odoocando.php [startDate] [endDate]`
+
+*parameter formats*
+
+start/end Date: yyyy-m-d

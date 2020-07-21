@@ -64,8 +64,42 @@ function inputs($months, $intervall)
 
 // name
 $name = readLine("your name: ");
-$start_input = inputs($months, 'start');
-$end_input = inputs($months, 'end');
+
+$start_input = null;
+$end_input = null;
+
+try {
+    if(isset($argv[1])) {
+        $start = $argv[1];
+
+        [$startYear, $startMonth, $startDay] = explode("-", $start);
+
+        $start_input= [
+            'year' => $startYear, 
+            'month' => $startMonth,
+            'day' => $startDay
+        ];
+        
+    }
+
+    if(isset($argv[2])) {
+        $end = $argv[2];
+
+        [$endYear, $endMonth, $endDay] = explode("-", $end);
+        
+        $end_input = [
+            'year' => $endYear, 
+            'month' => $endMonth,
+            'day' => $endDay
+        ];
+    }
+} catch(Exception $e) {
+    /* ignoring */
+}
+
+if($start_input == null) $start_input = inputs($months, 'start');
+if($end_input == null) $end_input = inputs($months, 'end');
+
 
 // debugs
 // $start_input = [
@@ -82,13 +116,13 @@ $end_input = inputs($months, 'end');
 $excludeDays = [];
 $i=1;
 echo "note: weekends are excluded automatically.\n";
-$excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/n): ");
+$excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
     $inputToExclude = inputs($months, "$i. exclusion: ");
     $dayToExclude = new DateTime();
     $dayToExclude->setDate($inputToExclude['year'], $inputToExclude['month'], $inputToExclude['day']);
     $excludeDays[] = $dayToExclude->format("Y-m-d");
-    $excludeDaysYesNo = readLine("do you want to exclude another day (y/n): ");
+    $excludeDaysYesNo = readLine("do you want to exclude another day (y/N): ");
     $i=$i+1;
 }
 
