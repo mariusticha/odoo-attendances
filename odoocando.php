@@ -43,7 +43,7 @@ function inputs($months, $intervall)
     }
 
     // evaluate max day
-    $max_day = in_array($month, [2, 4, 6, 9, 11]) ? $month == 2 ? 28 : 30 : 31;
+    $max_day = in_array($month, [2, 4, 6, 9, 11]) ? ($month == 2 ? 28 : 30) : 31;
     for ($i = 0; $i < $max_day; $i++) {
         $days[] = $i + 1;
     }
@@ -62,15 +62,39 @@ function inputs($months, $intervall)
     ];
 }
 
-// name
-$name = readLine("your name: ");
+if ($argc != 5) {
+    echo "wrong input\n\n";
+    echo "usage:\n";
+    echo "\tphp odoocando.php {first name} {last name} {startDate} {endDate}\n";
+    echo "formats:\n";
+    echo "\tfirst name: capitalized\n";
+    echo "\tlast name: capitalized\n";
+    echo "\tstartDate: yyyy-mm-dd\n";
+    echo "\tendDate: yyyy-mm-dd\n";
+    echo "example:\n";
+    echo "\tphp odoocando.php Paul_Hammer 2019-01-01 2020-12-31\n\n";
+    exit("please try again\n\n");
+}
 
 $start_input = null;
 $end_input = null;
+$name = null;
 
 try {
-    if(isset($argv[1])) {
-        $start = $argv[1];
+
+    // fist name
+    if (isset($argv[1])) {
+        $name = $argv[1];
+    }
+
+    // last name
+    if (isset($argv[2])) {
+        $name .= ' '.$argv[2];
+    }
+
+    // start
+    if(isset($argv[3])) {
+        $start = $argv[3];
 
         [$startYear, $startMonth, $startDay] = explode("-", $start);
 
@@ -82,8 +106,9 @@ try {
         
     }
 
-    if(isset($argv[2])) {
-        $end = $argv[2];
+    // end
+    if(isset($argv[4])) {
+        $end = $argv[4];
 
         [$endYear, $endMonth, $endDay] = explode("-", $end);
         
@@ -99,6 +124,7 @@ try {
 
 if($start_input == null) $start_input = inputs($months, 'start');
 if($end_input == null) $end_input = inputs($months, 'end');
+if($name == null) $name = readLine("your name: ");
 
 
 // debugs
@@ -118,12 +144,40 @@ $i=1;
 echo "note: weekends are excluded automatically.\n";
 $excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
-    $inputToExclude = inputs($months, "$i. exclusion: ");
-    $dayToExclude = new DateTime();
-    $dayToExclude->setDate($inputToExclude['year'], $inputToExclude['month'], $inputToExclude['day']);
-    $excludeDays[] = $dayToExclude->format("Y-m-d");
-    $excludeDaysYesNo = readLine("do you want to exclude another day (y/N): ");
-    $i=$i+1;
+    $singleDay = readLine("do you want to exclude a single day (y/N)? ");
+    switch ($singleDay) {
+        case 'y': 
+            [$year, $month, $day] = explode('-', readline("date to exclude (yyyy-mm-dd): "));
+            $dayToExclude = new DateTime();
+            $dayToExclude->setDate($year, $month, $day);
+            $excludeDays[] = $dayToExclude->format("Y-m-d");
+            $i=$i+1;
+            break;
+
+        default:
+            [$year, $month, $day] = explode('-', readline("begin date of exclusion (yyyy-mm-dd): "));
+            $beginExclude = new DateTime();
+            $beginExclude->setDate($year, $month, $day);
+            [$year, $month, $day] = explode('-', readline("end date of exclusion (yyyy-mm-dd): "));
+            $endExclude = new DateTime();
+            $endExclude->setDate($year, $month, $day);
+
+            $interval = DateInterval::createFromDateString('1 day');
+            $exclusion = new DatePeriod($beginExclude, $interval, $endExclude);
+            foreach ($exclusion as $date) {
+                $excludeDays[] = $date->format("Y-m-d");
+            }
+            $i = $i + 1;
+            break;
+    }
+
+    echo "\n";
+    echo "the following days are marked for exclusion: \n";
+    foreach ($excludeDays as $key => $value) {
+        echo "\t$value\n";
+    }
+    echo "\n";
+    $excludeDaysYesNo = readLine("do you want to add another exclusion (y/N): ");
 }
 
 $begin = new DateTime();
@@ -187,5 +241,11 @@ foreach ($period as $dt) {
 $writer = new Xlsx($spreadsheet);
 $writer->save('timesheet.xlsx');
 
+echo "\n";
+echo "***********************************\n";
+echo "*                                 *\n";
+echo "*     saved as timesheet.xlsx     *\n";
+echo "*                                 *\n";
+echo "***********************************\n";
 
 exit();
