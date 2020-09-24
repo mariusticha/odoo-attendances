@@ -1,6 +1,12 @@
 # odoo can do
 
-*prerequisites*
+**1. installation**
+
+*complete installation*
+
+`sudo bash setup.sh`
+
+*alternatively: manually install prerequisites*
 
 packages needed:
 
@@ -12,10 +18,15 @@ use composer to install PhpSpreadsheet into your project:
 
 `composer require phpoffice/phpspreadsheet`
 
+**2. run**
+
 *run script*
 
-`php odoocando.php [startDate] [endDate]`
+`php odoocando.php {first name} {last name} {startDate} {endDate}`
 
 *parameter formats*
 
-start/end Date: yyyy-m-d
+- first name: capitalized
+- last name: capitalized
+- startDate: yyyy-mm-dd
+- endDate: yyyy-mm-dd

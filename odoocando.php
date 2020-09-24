@@ -17,13 +17,27 @@ $sheet->setCellValue('E1', 'Netto Hours');
 $sheet->setCellValue('F1', 'Worked Hours');
 
 
-$months = [];
+const MONTHS = [
+    1 => 'January',
+    2 => 'February',
+    3 => 'March',
+    4 => 'April',
+    5 => 'May',
+    6 => 'June',
+    7 => 'July',
+    8 => 'August',
+    9 => 'September',
+    10 => 'October',
+    11 => 'November',
+    12 => 'December',
+];
 
-for ($i=0; $i < 12; $i++) { 
-    $months[] = $i+1;
-}
-
-function inputs($months, $intervall)
+/**
+ * 
+ *  deprecated
+ * 
+ */
+function inputs($intervall)
 {
     // setup connector
 
@@ -38,7 +52,7 @@ function inputs($months, $intervall)
 
     // month start
     $month = readLine("$intervall month [1,12]: ");
-    if (!in_array($month, $months)) {
+    if (!in_array($month, MONTHS)) {
         exit("error - wrong month input \n");
     }
 
@@ -122,22 +136,10 @@ try {
     /* ignoring */
 }
 
-if($start_input == null) $start_input = inputs($months, 'start');
-if($end_input == null) $end_input = inputs($months, 'end');
+if($start_input == null) $start_input = inputs(MONTHS, 'start');
+if($end_input == null) $end_input = inputs(MONTHS, 'end');
 if($name == null) $name = readLine("your name: ");
 
-
-// debugs
-// $start_input = [
-//     'year' => 2020,
-//     'month' => 5,
-//     'day' => 14,
-// ];
-// $end_input = [
-//     'year' => 2020,
-//     'month' => 5,
-//     'day' => 31,
-// ];
 
 $excludeDays = [];
 $i=1;
