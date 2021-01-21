@@ -5,6 +5,7 @@ require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 include 'api/vacations.php';
 
 $spreadsheet = new Spreadsheet();
@@ -16,7 +17,8 @@ $sheet->setCellValue('D1', 'Check Out');
 $sheet->setCellValue('E1', 'Netto Hours');
 $sheet->setCellValue('F1', 'Worked Hours');
 
-
+const STORE = "store.json";
+const HELP = "help.md";
 const MONTHS = [
     1 => 'January',
     2 => 'February',
@@ -37,7 +39,7 @@ const MONTHS = [
  *  deprecated
  * 
  */
-function inputs($intervall)
+function inputs($type, $intervall)
 {
     // setup connector
 
@@ -46,13 +48,13 @@ function inputs($intervall)
 
     // month start
     $year = readLine("$intervall year [$year_min,$year_max]: ");
-    if ($year<$year_min || $year>$year_max) {
+    if ($year < $year_min || $year > $year_max) {
         exit("error - wrong year input \n");
     }
 
     // month start
     $month = readLine("$intervall month [1,12]: ");
-    if (!in_array($month, MONTHS)) {
+    if (!in_array($month, array_keys(MONTHS))) {
         exit("error - wrong month input \n");
     }
 
@@ -76,84 +78,128 @@ function inputs($intervall)
     ];
 }
 
-if ($argc != 5) {
-    echo "wrong input\n\n";
-    echo "usage:\n";
-    echo "\tphp odoocando.php {first name} {last name} {startDate} {endDate}\n";
-    echo "formats:\n";
-    echo "\tfirst name: capitalized\n";
-    echo "\tlast name: capitalized\n";
-    echo "\tstartDate: yyyy-mm-dd\n";
-    echo "\tendDate: yyyy-mm-dd\n";
-    echo "example:\n";
-    echo "\tphp odoocando.php Paul_Hammer 2019-01-01 2020-12-31\n\n";
-    exit("please try again\n\n");
+
+/**
+ * // examples (short_options prefixed with --)
+ * option1:     // required
+ * option2::    // optional
+ * option       // toggle
+ * 
+ */
+$long_options = [
+    "fname:",
+    "lname:",
+    "start:",
+    "end:",
+    "savevar:",
+    "delvar",
+    "help"
+];
+/**
+ * // examples (short_options prefixed with -)
+ * a:           // required
+ * b::          // optional
+ * c            // toggle
+ */
+$short_options = "";
+$short_options .= "h";
+
+// read stored vars
+if (!file_exists(STORE)) {
+    $store = null;
+} else {
+    $string = file_get_contents(STORE);
+    $store = json_decode($string, true);
 }
+
+$options = getopt($short_options, $long_options);
 
 $start_input = null;
 $end_input = null;
 $name = null;
 
-try {
-
-    // fist name
-    if (isset($argv[1])) {
-        $name = $argv[1];
+if (isset($options['help']) || isset($options["h"])) {
+    if (file_exists(HELP)) {
+        $string = file_get_contents(HELP);
+        exit($string . "\n");
     }
 
-    // last name
-    if (isset($argv[2])) {
-        $name .= ' '.$argv[2];
-    }
-
-    // start
-    if(isset($argv[3])) {
-        $start = $argv[3];
-
-        [$startYear, $startMonth, $startDay] = explode("-", $start);
-
-        $start_input= [
-            'year' => $startYear, 
-            'month' => $startMonth,
-            'day' => $startDay
-        ];
-        
-    }
-
-    // end
-    if(isset($argv[4])) {
-        $end = $argv[4];
-
-        [$endYear, $endMonth, $endDay] = explode("-", $end);
-        
-        $end_input = [
-            'year' => $endYear, 
-            'month' => $endMonth,
-            'day' => $endDay
-        ];
-    }
-} catch(Exception $e) {
-    /* ignoring */
+    exit("cant find help file\n");
 }
 
-if($start_input == null) $start_input = inputs(MONTHS, 'start');
-if($end_input == null) $end_input = inputs(MONTHS, 'end');
-if($name == null) $name = readLine("your name: ");
+if (isset($options['delvar'])) {
+    if (file_exists(STORE)) {
+        unlink(STORE);
+        exit("vars deleted\n");
+    }
+
+    exit("nothing to delete\n");
+}
+
+
+if (isset($options['savevar'])) {
+    $variablesToBeSaved = explode(",", $options['savevar']);
+    var_dump($variablesToBeSaved);
+
+    foreach ($variablesToBeSaved as $var) {
+        [$key, $value] = explode("=", $var);
+
+        if (!$store)
+            $store = null;
+        $store[$key] = $value;
+    }
+    $fp = file_put_contents('store.json', json_encode($store));
+
+    exit("saved variables\n" . json_encode($store) . "\n");
+}
+
+
+
+if (isset($options['start'])) {
+    [$year, $month, $day] = explode("-", $options['start']);
+    $start_input = [
+        "year" => $year,
+        "month" => $month,
+        "day" => $day
+    ];
+}
+
+if (isset($options['end'])) {
+    [$year, $month, $day] = explode("-", $options['end']);
+    $end_input = [
+        "year" => $year,
+        "month" => $month,
+        "day" => $day
+    ];
+}
+
+if (isset($options['fname']) && isset($options['lname'])) {
+    $name = implode("_", [$options['fname'], $options['lname']]);
+}
+
+// pull names from var if not given
+if ($store && $store['lname'] && $store["fname"] && $name == null) {
+    $name == implode("_", [$store["fname"], $store["lname"]]);
+}
+
+if ($start_input == null) $start_input = inputs(MONTHS, 'start');
+if ($end_input == null) $end_input = inputs(MONTHS, 'end');
+if ($name == null) $name = readLine("your name: ");
 
 
 $excludeDays = [];
-$i=1;
+$i = 1;
 echo "note: weekends are excluded automatically.\n";
 $excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
     $singleDay = readLine("do you want to exclude a single day (y/N)? ");
     switch ($singleDay) {
-        case 'y': 
+        case 'y':
             [$year, $month, $day] = explode('-', readline("date to exclude (yyyy-mm-dd): "));
             $dayToExclude = new DateTime();
             $dayToExclude->setDate($year, $month, $day);
             $excludeDays[] = $dayToExclude->format("Y-m-d");
-            $i=$i+1;
+            $i = $i + 1;
             break;
 
         default:
@@ -186,7 +232,7 @@ $begin = new DateTime();
 $begin->setDate($start_input['year'], $start_input['month'], $start_input['day']);
 
 $end = new DateTime();
-$end->setDate($end_input['year'], $end_input['month'], $end_input['day']+1);
+$end->setDate($end_input['year'], $end_input['month'], $end_input['day'] + 1);
 
 if ($begin >= $end) {
     exit("error - wrong start/end input \n");
@@ -201,22 +247,22 @@ $connector = LPLib_Feiertage_Connector::getInstance();
 foreach ($period as $dt) {
 
     // exclude weekends
-    if($dt->format('N') >= 6) {
+    if ($dt->format('N') >= 6) {
         continue;
     }
 
     // exclude personal excludes
-    if(in_array($dt->format("Y-m-d"), $excludeDays)) {
+    if (in_array($dt->format("Y-m-d"), $excludeDays)) {
         continue;
     }
 
     $possibleVacation = $dt->format("Y-m-d");
-    if($connector->isFeiertagInLand($possibleVacation, LPLib_Feiertage_Connector::LAND_BRANDENBURG)) {
+    if ($connector->isFeiertagInLand($possibleVacation, LPLib_Feiertage_Connector::LAND_BRANDENBURG)) {
         echo "\n\nskipped vacation at $possibleVacation\n\n";
         continue;
     }
     $begin_work = clone $dt;
-    $begin_work->setTime(rand(7,9), rand(1,59), rand(1,59));
+    $begin_work->setTime(rand(7, 9), rand(1, 59), rand(1, 59));
 
     $working = rand(30200, 31000);
 
