@@ -22,11 +22,4 @@ use composer to install PhpSpreadsheet into your project:
 
 *run script*
 
-`php odoocando.php {first name} {last name} {startDate} {endDate}`
-
-*parameter formats*
-
-- first name: capitalized
-- last name: capitalized
-- startDate: yyyy-mm-dd
-- endDate: yyyy-mm-dd
+`php odoocando.php --fname="Paul" --lname="Hammer" --start="2021-01-01" --end="2021-01-31"`
