@@ -174,12 +174,12 @@ if (isset($options['end'])) {
 }
 
 if (isset($options['fname']) && isset($options['lname'])) {
-    $name = implode("_", [$options['fname'], $options['lname']]);
+    $name = implode(" ", [$options['fname'], $options['lname']]);
 }
 
 // pull names from var if not given
 if ($store && $store['lname'] && $store["fname"] && $name == null) {
-    $name == implode("_", [$store["fname"], $store["lname"]]);
+    $name == implode(" ", [$store["fname"], $store["lname"]]);
 }
 
 if ($start_input == null) $start_input = inputs(MONTHS, 'start');
