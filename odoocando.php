@@ -216,7 +216,7 @@ foreach ($period as $dt) {
         continue;
     }
     $begin_work = clone $dt;
-    $begin_work->setTime(rand(7,9), rand(1,59), rand(1,59));
+    $begin_work->setTime(8, rand(0,59), rand(0,59));
 
     $working = rand(30200, 31000);
 
