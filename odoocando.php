@@ -1,12 +1,37 @@
 <?php
 
+// supress warnings
+// error_reporting(E_ALL ^ E_WARNING); 
+
+// clear cli
+system('clear');
+
+print_r(
+"
+####  odoo attendances  ####
+
+"
+);
+
+// imports
 require 'vendor/autoload.php';
-// require 'month_and_days.php';
+require_once('main/Main.php');
+require_once('services/vacations.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-include 'api/vacations.php';
 
+
+$main = new Main();
+$main->execute();
+
+exit('root');
+
+/**
+ * 
+ *  init spreadsheet
+ * 
+ */
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 $sheet->setCellValue('A1', 'Employee');
@@ -15,7 +40,6 @@ $sheet->setCellValue('C1', 'Break');
 $sheet->setCellValue('D1', 'Check Out');
 $sheet->setCellValue('E1', 'Netto Hours');
 $sheet->setCellValue('F1', 'Worked Hours');
-
 
 const MONTHS = [
     1 => 'January',
@@ -34,7 +58,7 @@ const MONTHS = [
 
 /**
  * 
- *  deprecated
+ *  ---- user inputs ----
  * 
  */
 function inputs($intervall)
@@ -45,13 +69,13 @@ function inputs($intervall)
     $year_max = 2100;
 
     // month start
-    $year = readLine("$intervall year [$year_min,$year_max]: ");
+    $year = readline("$intervall year [$year_min,$year_max]: ");
     if ($year<$year_min || $year>$year_max) {
         exit("error - wrong year input \n");
     }
 
     // month start
-    $month = readLine("$intervall month [1,12]: ");
+    $month = readline("$intervall month [1,12]: ");
     if (!in_array($month, MONTHS)) {
         exit("error - wrong month input \n");
     }
@@ -63,7 +87,7 @@ function inputs($intervall)
     }
 
     // day start
-    $day = readLine("$intervall day [1,$max_day]: ");
+    $day = readline("$intervall day [1,$max_day]: ");
 
     if (!in_array($day, $days)) {
         exit("error - wrong day input \n");
@@ -76,77 +100,87 @@ function inputs($intervall)
     ];
 }
 
-if ($argc != 5) {
-    echo "wrong input\n\n";
-    echo "usage:\n";
-    echo "\tphp odoocando.php {first name} {last name} {startDate} {endDate}\n";
-    echo "formats:\n";
-    echo "\tfirst name: capitalized\n";
-    echo "\tlast name: capitalized\n";
-    echo "\tstartDate: yyyy-mm-dd\n";
-    echo "\tendDate: yyyy-mm-dd\n";
-    echo "example:\n";
-    echo "\tphp odoocando.php Paul_Hammer 2019-01-01 2020-12-31\n\n";
-    exit("please try again\n\n");
-}
+
+/**
+ * 
+ *  ---- command line arguments ----
+ * 
+ */
+
+// if ($argc != 5) {
+//     echo "wrong input\n\n";
+//     echo "usage:\n";
+//     echo "\tphp odoocando.php {first name} {last name} {startDate} {endDate}\n";
+//     echo "formats:\n";
+//     echo "\tfirst name: capitalized\n";
+//     echo "\tlast name: capitalized\n";
+//     echo "\tstartDate: yyyy-mm-dd\n";
+//     echo "\tendDate: yyyy-mm-dd\n";
+//     echo "example:\n";
+//     echo "\tphp odoocando.php Paul_Hammer 2019-01-01 2020-12-31\n\n";
+//     exit("please try again\n\n");
+// }
+
+// // read command line arguments
+// try {
+
+//     // fist name
+//     if (isset($argv[1])) {
+//         $name = $argv[1];
+//     }
+
+//     // last name
+//     if (isset($argv[2])) {
+//         $name .= ' ' . $argv[2];
+//     }
+
+//     // start
+//     if (isset($argv[3])) {
+//         $start = $argv[3];
+
+//         [$startYear, $startMonth, $startDay] = explode("-", $start);
+
+//         $start_input = [
+//             'year' => $startYear,
+//             'month' => $startMonth,
+//             'day' => $startDay
+//         ];
+//     }
+
+//     // end
+//     if (isset($argv[4])) {
+//         $end = $argv[4];
+
+//         [$endYear, $endMonth, $endDay] = explode("-", $end);
+
+//         $end_input = [
+//             'year' => $endYear,
+//             'month' => $endMonth,
+//             'day' => $endDay
+//         ];
+//     }
+// } catch (Exception $e) {
+//     /* ignoring */
+// }
 
 $start_input = null;
 $end_input = null;
 $name = null;
 
-try {
 
-    // fist name
-    if (isset($argv[1])) {
-        $name = $argv[1];
-    }
 
-    // last name
-    if (isset($argv[2])) {
-        $name .= ' '.$argv[2];
-    }
-
-    // start
-    if(isset($argv[3])) {
-        $start = $argv[3];
-
-        [$startYear, $startMonth, $startDay] = explode("-", $start);
-
-        $start_input= [
-            'year' => $startYear, 
-            'month' => $startMonth,
-            'day' => $startDay
-        ];
-        
-    }
-
-    // end
-    if(isset($argv[4])) {
-        $end = $argv[4];
-
-        [$endYear, $endMonth, $endDay] = explode("-", $end);
-        
-        $end_input = [
-            'year' => $endYear, 
-            'month' => $endMonth,
-            'day' => $endDay
-        ];
-    }
-} catch(Exception $e) {
-    /* ignoring */
-}
 
 if($start_input == null) $start_input = inputs(MONTHS, 'start');
 if($end_input == null) $end_input = inputs(MONTHS, 'end');
-if($name == null) $name = readLine("your name: ");
+if($name == null) $name = readline("your name: ");
 
 
 $excludeDays = [];
 $i=1;
 echo "note: weekends are excluded automatically.\n";
-$excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/N): ");
+$excludeDaysYesNo = readline("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
-    $singleDay = readLine("do you want to exclude a single day (y/N)? ");
+    $singleDay = readline("do you want to exclude a single day (y/N)? ");
     switch ($singleDay) {
         case 'y': 
             [$year, $month, $day] = explode('-', readline("date to exclude (yyyy-mm-dd): "));
@@ -179,7 +213,7 @@ while ($excludeDaysYesNo == 'y') {
         echo "\t$value\n";
     }
     echo "\n";
-    $excludeDaysYesNo = readLine("do you want to add another exclusion (y/N): ");
+    $excludeDaysYesNo = readline("do you want to add another exclusion (y/N): ");
 }
 
 $begin = new DateTime();
