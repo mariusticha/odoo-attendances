@@ -3,33 +3,71 @@
 class Misc
 {
     /**
-     * prints the given text to cli and adds new lines for better readability
+     * prints the given text to cli and adds styling
      *
      * @param   string  $text
      * @param   int     $new_lines  amount of new lines (default: 2)
      *
      * @return  void                [return description]
      */
-    public static function my_print(string $text, int $new_lines = 2): void
+    public static function my_print(string $text, int $new_lines = 2, $indent = false): void
     {
-        print_r($text);
+        $indented_text = $indent ? "    $text" : $text;
+        print_r($indented_text);
         self::nl($new_lines);
     }
 
     /**
-     * adds a readline to cli and adds new lines for better readability
+     * adds a readline to cli and adds styling
      *
      * @param   string  $text
-     * @param   int     $new_lines  amount of new lines (default: 2)
+     * @param   int     $new_lines  amount of new lines (default: 1)
      *
      * @return  void                [return description]
      */
-    public static function my_read(string $text, int $new_lines = 1): string
+    public static function my_read(string $text, int $new_lines = 1, bool $indent = true): string
     {
-        $input = readline("    $text");
+        $indented_text = $indent ? "    $text" : $text;
+        $input = readline("$indented_text");
         self::nl($new_lines);
 
         return $input;
+    }
+
+    /**
+     * adds a choice of options and adds styling
+     *
+     * @param   string  $text
+     * @param   array   $options    [['value' => $val, 'text' => $text]]
+     * @param   int     $new_lines  0
+     *
+     * @return  array               ['value' => $val, 'text' => $text]
+     */
+    public static function my_switch(string $text, array $options, int $new_lines = 0): array
+    {
+        // question
+        self::my_print($text, 2, true);
+
+        // options
+        $keys = [];
+        foreach ($options as $iterator => $option) {
+            $key = $iterator + 1;
+            $keys[] = $key;
+            self::my_print("    $key. {$option['text']}", 1, true);
+        }
+        self::nl();
+
+        $choice = self::my_read(
+            "please choose your option (" . implode(', ', $keys) . "): ",
+            1,
+            false
+        );
+
+        $result = $options[$choice - 1];
+        self::my_print("your choice: {$result['text']}");
+
+        self::nl($new_lines);
+        return $result;
     }
 
     /**

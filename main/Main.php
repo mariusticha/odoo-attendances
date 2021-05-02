@@ -59,6 +59,7 @@ class Main
             // check personal
             $personal->check($this->personal_data);
         }
+
     }
 
 
