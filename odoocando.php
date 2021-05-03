@@ -1,17 +1,22 @@
+#!/usr/bin/env php
 <?php
+
+/**
+ *                                  _         _          __  __
+ *                                 | |       | |        / _|/ _|
+ *    ___ _   _ _ __ _ __ ___ _ __ | |_   ___| |_ _   _| |_| |_
+ *   / __| | | | '__| '__/ _ \ '_ \| __| / __| __| | | |  _|  _|
+ *  | (__| |_| | |  | | |  __/ | | | |_  \__ \ |_| |_| | | | |
+ *   \___|\__,_|_|  |_|  \___|_| |_|\__| |___/\__|\__,_|_| |_|
+ *
+ *
+ */
 
 // supress warnings
 // error_reporting(E_ALL ^ E_WARNING); 
 
 // clear cli
 system('clear');
-
-print_r(
-"
-####  odoo attendances  ####
-
-"
-);
 
 // imports
 require 'vendor/autoload.php';
@@ -25,7 +30,20 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 $main = new Main();
 $main->execute();
 
-exit('root');
+exit('exit');
+
+/**
+ * 
+ * 
+ *         _     _       _          __  __
+ *        | |   | |     | |        / _|/ _|
+ *    ___ | | __| |  ___| |_ _   _| |_| |_
+ *   / _ \| |/ _` | / __| __| | | |  _|  _|
+ *  | (_) | | (_| | \__ \ |_| |_| | | | |
+ *   \___/|_|\__,_| |___/\__|\__,_|_| |_|
+ *  
+ *
+ */
 
 /**
  * 
@@ -70,7 +88,7 @@ function inputs($intervall)
 
     // month start
     $year = readline("$intervall year [$year_min,$year_max]: ");
-    if ($year<$year_min || $year>$year_max) {
+    if ($year < $year_min || $year > $year_max) {
         exit("error - wrong year input \n");
     }
 
@@ -170,24 +188,24 @@ $name = null;
 
 
 
-if($start_input == null) $start_input = inputs(MONTHS, 'start');
-if($end_input == null) $end_input = inputs(MONTHS, 'end');
-if($name == null) $name = readline("your name: ");
+if ($start_input == null) $start_input = inputs(MONTHS, 'start');
+if ($end_input == null) $end_input = inputs(MONTHS, 'end');
+if ($name == null) $name = readline("your name: ");
 
 
 $excludeDays = [];
-$i=1;
+$i = 1;
 echo "note: weekends are excluded automatically.\n";
 $excludeDaysYesNo = readline("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
     $singleDay = readline("do you want to exclude a single day (y/N)? ");
     switch ($singleDay) {
-        case 'y': 
+        case 'y':
             [$year, $month, $day] = explode('-', readline("date to exclude (yyyy-mm-dd): "));
             $dayToExclude = new DateTime();
             $dayToExclude->setDate($year, $month, $day);
             $excludeDays[] = $dayToExclude->format("Y-m-d");
-            $i=$i+1;
+            $i = $i + 1;
             break;
 
         default:
@@ -220,7 +238,7 @@ $begin = new DateTime();
 $begin->setDate($start_input['year'], $start_input['month'], $start_input['day']);
 
 $end = new DateTime();
-$end->setDate($end_input['year'], $end_input['month'], $end_input['day']+1);
+$end->setDate($end_input['year'], $end_input['month'], $end_input['day'] + 1);
 
 if ($begin >= $end) {
     exit("error - wrong start/end input \n");
@@ -235,22 +253,22 @@ $connector = LPLib_Feiertage_Connector::getInstance();
 foreach ($period as $dt) {
 
     // exclude weekends
-    if($dt->format('N') >= 6) {
+    if ($dt->format('N') >= 6) {
         continue;
     }
 
     // exclude personal excludes
-    if(in_array($dt->format("Y-m-d"), $excludeDays)) {
+    if (in_array($dt->format("Y-m-d"), $excludeDays)) {
         continue;
     }
 
     $possibleVacation = $dt->format("Y-m-d");
-    if($connector->isFeiertagInLand($possibleVacation, LPLib_Feiertage_Connector::LAND_BRANDENBURG)) {
+    if ($connector->isFeiertagInLand($possibleVacation, LPLib_Feiertage_Connector::LAND_BRANDENBURG)) {
         echo "\n\nskipped vacation at $possibleVacation\n\n";
         continue;
     }
     $begin_work = clone $dt;
-    $begin_work->setTime(8, rand(0,59), rand(0,59));
+    $begin_work->setTime(8, rand(0, 59), rand(0, 59));
 
     $working = rand(30200, 31000);
 

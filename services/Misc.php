@@ -10,10 +10,10 @@ class Misc
      *
      * @return  void                [return description]
      */
-    public static function my_print(string $text, int $new_lines = 2, $indent = false): void
+    public static function my_print(string $text, int $new_lines = 2, $indent = false, string $type = ''): void
     {
         $indented_text = $indent ? "    $text" : $text;
-        print_r($indented_text);
+        print_r(self::color($indented_text, $type));
         self::nl($new_lines);
     }
 
@@ -25,10 +25,10 @@ class Misc
      *
      * @return  void                [return description]
      */
-    public static function my_read(string $text, int $new_lines = 1, bool $indent = true): string
+    public static function my_read(string $text, int $new_lines = 1, bool $indent = true, string $type = ''): string
     {
         $indented_text = $indent ? "    $text" : $text;
-        $input = readline("$indented_text");
+        $input = readline(self::color($indented_text, $type));
         self::nl($new_lines);
 
         return $input;
@@ -85,5 +85,16 @@ class Misc
             $amount -= 1;
         }
         print_r($new_lines);
+    }
+
+    public static function color(string $text, string $type = null): string
+    {
+        return match ($type) {
+            'error' => "\033[31m$text \033[0m",
+            'success' => "\033[32m$text \033[0m",
+            'warning' => "\033[33m$text \033[0m",
+            'info' => "\033[36m$text \033[0m",
+            default => $text,
+        };
     }
 }
