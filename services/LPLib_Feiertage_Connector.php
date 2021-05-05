@@ -1,5 +1,7 @@
 <?php
 
+namespace Services;
+
 /* 
  *  -----------
  *	Connector-Script fuer die Feiertags-API https://feiertage-api.de
@@ -114,11 +116,11 @@ class LPLib_Feiertage_Connector
 			curl_close($ch);
 	
 			if(empty($data))
-			    throw new Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
+			    throw new \Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
 			else
 			    return $data;
 		}
 		
-		throw new Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
+		throw new \Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
 	}
 }

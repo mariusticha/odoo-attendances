@@ -1,5 +1,6 @@
 <?php
-require_once('services/Misc.php');
+
+namespace Services;
 class PersonalData
 {
     public function __construct()

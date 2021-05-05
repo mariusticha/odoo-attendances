@@ -12,20 +12,16 @@
  *
  */
 
-// supress warnings
-// error_reporting(E_ALL ^ E_WARNING); 
-
 // clear cli
 system('clear');
 
 // imports
 require 'vendor/autoload.php';
-require_once('main/Main.php');
-require_once('services/vacations.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
+use Services\LPLib_Feiertage_Connector;
+use Main\Main;
 
 $main = new Main();
 $main->execute();

@@ -1,7 +1,10 @@
 <?php
 
-require_once('services/Misc.php');
-require_once('services/PersonalData.php');
+namespace Main;
+
+use Carbon\Carbon;
+use Services\Misc;
+use Services\PersonalData;
 
 class Main
 {
@@ -35,7 +38,6 @@ class Main
         $this->chapter_1();
 
         $this->chapter_2();
-
     }
 
     private function chapter_1(): void
@@ -82,10 +84,21 @@ class Main
         Misc::my_print("## chapter 2 - time span ##", 2, false, 'info');
 
         Misc::my_print("first, let's define the period of time for which you want to enter the attendances");
+
+        $input_begin = Misc::my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
+        $input_end = Misc::my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
         
-        $period_begin = Misc::my_read("what's the first day you want to fill, e.g. 2021-04-30? ");
+        while ($input_begin > $input_end) {
+            Misc::my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
+            Misc::my_print("hint: please note that the first day must be before the last day");
+            Misc::my_print("let's try again..");
+            $input_begin = Misc::my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
+            $input_end = Misc::my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
+        }
+
+        $carbon_begin =  Carbon::createFromFormat('Y-m-d', $input_begin);
+        $carbon_end =  Carbon::createFromFormat('Y-m-d', $input_end);
+        
+        Misc::my_print("all good.");
     }
-
-
-   
 }
