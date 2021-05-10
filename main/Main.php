@@ -18,6 +18,10 @@ class Main
         'name' => '',
         'contract' => '',
     ];
+    private $period = [
+        'begin' => '',
+        'end' => '',
+    ];
 
     /**
      * 
@@ -35,12 +39,12 @@ class Main
     public function execute(): void
     {
 
-        $this->chapter_1();
+        $this->chapter_one();
 
-        $this->chapter_2();
+        $this->chapter_two();
     }
 
-    private function chapter_1(): void
+    private function chapter_one(): void
     {
         // init helpers
         $personal = new PersonalData();
@@ -79,7 +83,7 @@ class Main
         }
     }
 
-    private function chapter_2(): void
+    private function chapter_two(): void
     {
         Misc::my_print("## chapter 2 - time span ##", 2, false, 'info');
 
@@ -96,9 +100,13 @@ class Main
             $input_end = Misc::my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
         }
 
-        $carbon_begin =  Carbon::createFromFormat('Y-m-d', $input_begin);
-        $carbon_end =  Carbon::createFromFormat('Y-m-d', $input_end);
+        try {
+            $this->period['begin'] =  Carbon::createFromFormat('Y-m-d', $input_begin);
+            $this->period['end'] =  Carbon::createFromFormat('Y-m-d', $input_end);
+        } catch (\Throwable $th) {
+            exit('error');
+        }
         
-        Misc::my_print("all good.");
+        Misc::my_print("all good. let's move on..");
     }
 }
