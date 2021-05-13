@@ -264,12 +264,12 @@ foreach ($period as $dt) {
         continue;
     }
     $begin_work = clone $dt;
-    $begin_work->setTime(8, rand(0, 59), rand(0, 59));
+    // $begin_work->setTime(8, rand(0, 59), rand(0, 59));
 
     $working = rand(30200, 31000);
 
     $end_work = clone $begin_work;
-    $end_work->add(new DateInterval('PT' . $working . 'S'));
+    // $end_work->add(new DateInterval('PT' . $working . 'S'));
 
     $sheet->setCellValue("A$row", $name);
     $sheet->setCellValue("B$row", $begin_work->format("Y-m-d H:i:s"));

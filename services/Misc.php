@@ -15,7 +15,7 @@ class Misc
     public static function my_print(string $text, int $new_lines = 2, $indent = false, string $type = ''): void
     {
         $indented_text = $indent ? "    $text" : $text;
-        print_r(self::color($indented_text, $type));
+        print_r(self::style($indented_text, $type));
         self::nl($new_lines);
     }
 
@@ -30,7 +30,7 @@ class Misc
     public static function my_read(string $text, int $new_lines = 1, bool $indent = true, string $type = ''): string
     {
         $indented_text = $indent ? "    $text" : $text;
-        $input = readline(self::color($indented_text, $type));
+        $input = readline(self::style($indented_text, $type));
         self::nl($new_lines);
 
         return $input;
@@ -89,13 +89,25 @@ class Misc
         print_r($new_lines);
     }
 
-    public static function color(string $text, string $type = null): string
+    /**
+     * styles the given text
+     *
+     * @param   string  $text
+     * @param   string  $type  styleing type
+     *
+     * @return  string  styleed string
+     */
+    public static function style(string $text, string $type = 'success'): string
     {
         return match ($type) {
             'error' => "\033[31m$text \033[0m",
             'success' => "\033[32m$text \033[0m",
             'warning' => "\033[33m$text \033[0m",
             'info' => "\033[36m$text \033[0m",
+            'bold' => "\033[1m$text \033[0m",
+            'italic' => "\033[3m$text \033[0m",
+            'underline' => "\033[4m$text \033[0m",
+            'strikethrough' => "\033[9m$text\033[0m",
             default => $text,
         };
     }
