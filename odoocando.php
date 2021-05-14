@@ -1,13 +1,51 @@
+#!/usr/bin/env php
 <?php
 
+/**
+ *                                  _         _          __  __
+ *                                 | |       | |        / _|/ _|
+ *    ___ _   _ _ __ _ __ ___ _ __ | |_   ___| |_ _   _| |_| |_
+ *   / __| | | | '__| '__/ _ \ '_ \| __| / __| __| | | |  _|  _|
+ *  | (__| |_| | |  | | |  __/ | | | |_  \__ \ |_| |_| | | | |
+ *   \___|\__,_|_|  |_|  \___|_| |_|\__| |___/\__|\__,_|_| |_|
+ *
+ *
+ */
+
+// clear cli
+system('clear');
+
+// imports
 require 'vendor/autoload.php';
-// require 'month_and_days.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Services\LPLib_Feiertage_Connector;
+use Main\Main;
 
-include 'api/vacations.php';
+$main = new Main();
+$main->execute();
 
+exit('exit');
+
+/**
+ * 
+ * 
+ *         _     _       _          __  __
+ *        | |   | |     | |        / _|/ _|
+ *    ___ | | __| |  ___| |_ _   _| |_| |_
+ *   / _ \| |/ _` | / __| __| | | |  _|  _|
+ *  | (_) | | (_| | \__ \ |_| |_| | | | |
+ *   \___/|_|\__,_| |___/\__|\__,_|_| |_|
+ *  
+ *
+ */
+
+/**
+ * 
+ *  init spreadsheet
+ * 
+ */
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 $sheet->setCellValue('A1', 'Employee');
@@ -36,7 +74,7 @@ const MONTHS = [
 
 /**
  * 
- *  deprecated
+ *  ---- user inputs ----
  * 
  */
 function inputs($type, $intervall)
@@ -65,7 +103,7 @@ function inputs($type, $intervall)
     }
 
     // day start
-    $day = readLine("$intervall day [1,$max_day]: ");
+    $day = readline("$intervall day [1,$max_day]: ");
 
     if (!in_array($day, $days)) {
         exit("error - wrong day input \n");
@@ -190,9 +228,9 @@ if ($name == null) $name = readLine("your name: ");
 $excludeDays = [];
 $i = 1;
 echo "note: weekends are excluded automatically.\n";
-$excludeDaysYesNo = readLine("do you want to exclude days like holiday or sick leaves (y/N): ");
+$excludeDaysYesNo = readline("do you want to exclude days like holiday or sick leaves (y/N): ");
 while ($excludeDaysYesNo == 'y') {
-    $singleDay = readLine("do you want to exclude a single day (y/N)? ");
+    $singleDay = readline("do you want to exclude a single day (y/N)? ");
     switch ($singleDay) {
         case 'y':
             [$year, $month, $day] = explode('-', readline("date to exclude (yyyy-mm-dd): "));
@@ -225,7 +263,7 @@ while ($excludeDaysYesNo == 'y') {
         echo "\t$value\n";
     }
     echo "\n";
-    $excludeDaysYesNo = readLine("do you want to add another exclusion (y/N): ");
+    $excludeDaysYesNo = readline("do you want to add another exclusion (y/N): ");
 }
 
 $begin = new DateTime();
@@ -267,7 +305,7 @@ foreach ($period as $dt) {
     $working = rand(30200, 31000);
 
     $end_work = clone $begin_work;
-    $end_work->add(new DateInterval('PT' . $working . 'S'));
+    // $end_work->add(new DateInterval('PT' . $working . 'S'));
 
     $sheet->setCellValue("A$row", $name);
     $sheet->setCellValue("B$row", $begin_work->format("Y-m-d H:i:s"));

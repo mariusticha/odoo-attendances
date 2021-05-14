@@ -2,5 +2,4 @@
 composer.json
 composer.lock
 timesheet.xlsx
-tmp*
-store.json
+personal_data.json

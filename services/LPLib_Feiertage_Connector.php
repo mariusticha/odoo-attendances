@@ -1,5 +1,7 @@
 <?php
 
+namespace Services;
+
 /* 
  *  -----------
  *	Connector-Script fuer die Feiertags-API https://feiertage-api.de
@@ -82,15 +84,15 @@ class LPLib_Feiertage_Connector
 		return self::$cache['c2-'.$jahr];
 	}
 	
-	public function  isFeiertagInLand($datum,$land)
+	public function  isFeiertagInLand($datum,$land): string
 	{
 		$feiertage_land = $this->getFeiertageVonLand(date('Y',strtotime($datum)),$land);
 				
 		foreach($feiertage_land as $feiertagsname => $feiertagsdatum)
 			if($feiertagsdatum['datum'] == date('Y-m-d',strtotime($datum)))
-				return true;
+				return $feiertagsname;
 			
-		return false;			
+		return '';			
 	}
 	
 	private function _file_get_contents_t_curl($url) {
@@ -114,11 +116,11 @@ class LPLib_Feiertage_Connector
 			curl_close($ch);
 	
 			if(empty($data))
-			    throw new Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
+			    throw new \Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
 			else
 			    return $data;
 		}
 		
-		throw new Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
+		throw new \Exception('Verbindung zu feiertage-api.de war nicht moeglich.');
 	}
 }
