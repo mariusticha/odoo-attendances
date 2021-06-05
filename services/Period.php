@@ -28,8 +28,8 @@ class Period
 
     private static function get_start_and_end_date($debug = null): array
     {
-        $input_start = Misc::my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
-        $input_end = Misc::my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
+        $input_start = my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
+        $input_end = my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
 
         // ? debug 
         if ($debug == 'debug:total') {
@@ -43,11 +43,11 @@ class Period
         // ? end debug
 
         while ($result = self::are_invalid_date_inputs($input_start, $input_end)) {
-            Misc::my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
-            Misc::my_print("hint: $result");
-            Misc::my_print("let's try again..");
-            $input_start = Misc::my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
-            $input_end = Misc::my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
+            my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
+            my_print("hint: $result");
+            my_print("let's try again..");
+            $input_start = my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
+            $input_end = my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
         }
 
         // $start = Carbon::createFromFormat('Y-m-d', $input_start);
@@ -66,7 +66,7 @@ class Period
         // start or enter not available » try again
         if (!$start || !$end) {
 
-            return Misc::style('please enter a first day as well as the last day.');
+            return style('please enter a first day as well as the last day.');
         }
 
         // start or enter not valid » try again
@@ -75,13 +75,13 @@ class Period
             @Carbon::createFromFormat('Y-m-d', $end);
         } catch (\Throwable $th) {
 
-            return Misc::style('please enter two valid dates, format: yyyy-mm-dd');
+            return style('please enter two valid dates, format: yyyy-mm-dd');
         }
 
         // start <= end » try again
         if ($start > $end) {
 
-            return Misc::style('please enter a start date that is earlier than the end date');
+            return style('please enter a start date that is earlier than the end date');
         }
 
         // all good
@@ -90,7 +90,7 @@ class Period
 
     public static function show_period(array $period, array $excluded): void
     {
-        $show_current_period = Misc::my_read("do you want to see the period selected so far? (Y/n) ");
+        $show_current_period = my_read("do you want to see the period selected so far? (Y/n) ");
 
         if ($show_current_period != 'n') {
             $period = CarbonPeriod::create(
@@ -101,7 +101,7 @@ class Period
 
                 self::print_date($date->format(Two::FORMAT_STORE), $excluded);
             }
-            Misc::nl();
+            nl();
         }
     }
 
@@ -112,13 +112,13 @@ class Period
             $reason = $excluded[$date];
 
             match ($reason) {
-                'holiday' =>  Misc::my_print(
+                'holiday' =>  my_print(
                     $date . " ({$reason})",
                     1,
                     true,
                     'warning'
                 ),
-                default => Misc::my_print(
+                default => my_print(
                     $date . " ({$reason})",
                     1,
                     true,
@@ -129,7 +129,7 @@ class Period
             return;
         }
 
-        Misc::my_print(
+        my_print(
             $date,
             1,
             true,

@@ -4,9 +4,7 @@ namespace Chapters;
 
 use Carbon\CarbonPeriod;
 use Services\LPLib_Feiertage_Connector;
-use Services\Misc;
 use Services\Period;
-use Services\Service;
 
 class Two
 {
@@ -25,7 +23,7 @@ class Two
 
     public function execute(): void
     {
-        Misc::my_print("## chapter 2 - time span ##", 2, false, 'info');
+        my_print("## chapter 2 - time span ##", 2, false, 'info');
         dd(
             'hello',
             'yo',
@@ -34,15 +32,15 @@ class Two
         );
         exit;
 
-        Misc::my_print("first, let's define the period of time for which you want to enter the attendances");
+        my_print("first, let's define the period of time for which you want to enter the attendances");
 
         $this->working_period = Period::get_period('debug:total');
-        Misc::my_print("we've removed weekends and national holidays by default.");
+        my_print("we've removed weekends and national holidays by default.");
 
         $this->exclude_weekends_and_public_holiday();
         Period::show_period($this->working_period, $this->excluded_period);
 
-        Misc::my_print("alright. let's move on and exclude your holidays or sick leaves.");
+        my_print("alright. let's move on and exclude your holidays or sick leaves.");
 
         $this->exclude_holidays();
     }
@@ -74,7 +72,7 @@ class Two
 
     private function exclude_holidays(): void
     {
-        $holiday = Misc::my_switch("do you want to exclude any days, e.g. sick leaves, holidays, etc?", [
+        $holiday = my_switch("do you want to exclude any days, e.g. sick leaves, holidays, etc?", [
             [
                 'value' => 1,
                 'text' => 'yes, a period of days',
@@ -100,7 +98,7 @@ class Two
                 3 => $this->exclude_half_day_as_holidays(),
             };
 
-            $holiday = Misc::my_switch("do you want to exclude more days?", [
+            $holiday = my_switch("do you want to exclude more days?", [
                 [
                     'value' => 1,
                     'text' => 'yes, a period of days',

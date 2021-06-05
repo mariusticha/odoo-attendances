@@ -17,13 +17,12 @@ system('clear');
 
 // imports
 require 'vendor/autoload.php';
-require 'services/Service.php';
+require 'services/Helper.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Services\LPLib_Feiertage_Connector;
 use Main\Main;
-use Services\Service;
 
 // entry point
 (new Main())->execute();

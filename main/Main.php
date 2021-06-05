@@ -4,7 +4,6 @@ namespace Main;
 
 use Chapters\One;
 use Chapters\Two;
-use Services\Misc;
 
 class Main
 {
@@ -26,8 +25,8 @@ class Main
         $this->json = @file_get_contents('personal_data.json');
 
         // welcome screen
-        Misc::nl();
-        Misc::my_print("####  odoo attendances  ####", 2, false, 'success');
+        nl();
+        my_print("####  odoo attendances  ####", 2, false, 'success');
     }
 
     public function execute(): void
