@@ -1,13 +1,14 @@
 <?php
 
 namespace Services;
+
 class PersonalData
 {
     public function __construct()
     {
     }
 
-    public function check($personal_data): array
+    public function check(array $personal_data): array
     {
         $person_correct = Misc::my_read(
             "wait.. - {$personal_data['name']} - this is you, right? (Y/n) "
@@ -29,7 +30,6 @@ class PersonalData
             $personal_data['contract'] = $this->set_up_contract();
 
             $this->store($personal_data);
-
         }
 
         Misc::my_print("nice, let's go on.");
@@ -53,9 +53,7 @@ class PersonalData
 
         Misc::my_print("nice to meet you $name 👋");
 
-        $this->store($personal_data);
-
-        return $personal_data;
+        return $this->store($personal_data);
     }
 
     private function set_up_contract(): array
@@ -80,18 +78,19 @@ class PersonalData
         ]);
     }
 
-    private function store($personal_data): void
+    private function store(array $personal_data): array
     {
         $store = Misc::my_read("do you want to store your personal data for the next time? (Y/n) ");
 
         if ($store === 'n') {
             Misc::my_print("ok, your data won't be stored. let's move on.");
 
-            return;
+            return [];
         }
 
         file_put_contents('personal_data.json', json_encode($personal_data));
         Misc::my_print("great, your data has been stored for the next session. so, let's move on.");
-        
+
+        return $personal_data;
     }
 }

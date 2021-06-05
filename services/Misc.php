@@ -90,6 +90,24 @@ class Misc
     }
 
     /**
+     * dump and die
+     *
+     * @param   mixed   $variable
+     * @param   bool    $exit  exits app
+     *
+     * @return  string  styleed string
+     */
+    public static function dd(...$variables): void
+    {
+        foreach ($variables as $key => $variable) {
+            self::my_print(" -- $key --", 1, false, 'warning');
+            var_export($variable);
+            self::nl(2);
+        }
+        exit;
+    }
+
+    /**
      * styles the given text
      *
      * @param   string  $text
@@ -97,7 +115,7 @@ class Misc
      *
      * @return  string  styleed string
      */
-    public static function style(string $text, string $type = 'success'): string
+    public static function style(?string $text, string $type = 'success'): string
     {
         return match ($type) {
             'error' => "\033[31m$text \033[0m",

@@ -17,14 +17,16 @@ system('clear');
 
 // imports
 require 'vendor/autoload.php';
+require 'services/Service.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Services\LPLib_Feiertage_Connector;
 use Main\Main;
+use Services\Service;
 
-$main = new Main();
-$main->execute();
+// entry point
+(new Main())->execute();
 
 exit('exit');
 
@@ -300,7 +302,7 @@ foreach ($period as $dt) {
         continue;
     }
     $begin_work = clone $dt;
-    $begin_work->setTime(rand(7, 9), rand(1, 59), rand(1, 59));
+    // $begin_work->setTime(rand(7, 9), rand(1, 59), rand(1, 59));
 
     $working = rand(30200, 31000);
 
