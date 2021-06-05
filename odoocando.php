@@ -19,9 +19,6 @@ system('clear');
 require 'vendor/autoload.php';
 require 'services/Helper.php';
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Services\LPLib_Feiertage_Connector;
 use Main\Main;
 
 // entry point
@@ -42,6 +39,9 @@ exit('exit');
  *
  */
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Services\LPLib_Feiertage_Connector;
 /**
  * 
  *  init spreadsheet

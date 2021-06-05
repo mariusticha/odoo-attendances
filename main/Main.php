@@ -32,6 +32,6 @@ class Main
     public function execute(): void
     {
         (new One($this->json))->execute();
-        (new Two($this->json))->execute();
+        (new Two())->execute();
     }
 }

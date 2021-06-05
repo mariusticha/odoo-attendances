@@ -18,7 +18,6 @@ class Two
     public function __construct()
     {
         $this->feiertageApi = LPLib_Feiertage_Connector::getInstance();
-        
     }
 
     public function execute(): void
