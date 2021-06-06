@@ -15,7 +15,11 @@ class Misc
     public static function my_print(string $text, int $new_lines = 2, $indent = false, string $type = ''): void
     {
         $indented_text = $indent ? "    $text" : $text;
-        print_r(self::style($indented_text, $type));
+        print_r(
+            $type ?
+                self::style($indented_text, $type) :
+                $text
+        );
         self::nl($new_lines);
     }
 
@@ -29,8 +33,11 @@ class Misc
      */
     public static function my_read(string $text, int $new_lines = 1, bool $indent = true, string $type = ''): string
     {
-        $indented_text = $indent ? "    $text" : $text;
-        $input = readline(self::style($indented_text, $type));
+        // show question in style
+        self::my_print($text, 2, $indent, $type);
+
+        // read answer
+        $input = readline('    > ');
         self::nl($new_lines);
 
         return $input;
@@ -45,12 +52,12 @@ class Misc
      *
      * @return  array               ['value' => $val, 'text' => $text]
      */
-    public static function my_switch(string $text, array $options, int $new_lines = 0): array
+    public static function my_switch(string $text, array $options, ?int $debug = null, int $new_lines = 0,): array
     {
         // question
         self::my_print($text, 2, true);
 
-        // options
+        // show options
         $keys = [];
         foreach ($options as $iterator => $option) {
             $key = $iterator + 1;
@@ -59,16 +66,35 @@ class Misc
         }
         self::nl();
 
+        // ask for choice
         $choice = self::my_read(
-            "please choose your option (" . implode(', ', $keys) . "): ",
+            "please choose your option " . italic("(" . implode(', ', $keys) . ")"),
             1,
             false
         );
 
-        $result = $options[$choice - 1];
-        self::my_print("your choice: {$result['text']}");
+        if (!is_null($debug) && $choice === '') {
 
+            return $options[$debug];
+        }
+
+        $chosen_key = intval($choice) - 1;
+
+        if (!array_key_exists($chosen_key, $options)) {
+            self::my_print(
+                "your input '$choice' was invalid, please choose only from these options: " . implode(', ', $keys),
+                2,
+                false,
+                'warning'
+            );
+            return self::my_switch($text, $options, $new_lines);
+        }
+
+        // print result
+        $result = $options[$chosen_key];
+        self::my_print("your choice: {$result['text']}");
         self::nl($new_lines);
+
         return $result;
     }
 
@@ -92,7 +118,7 @@ class Misc
     /**
      * dump and die
      *
-     * @param   mixed   $variable
+     * @param   mixed   $variables
      * @param   bool    $exit  exits app
      *
      * @return  string  styleed string
@@ -118,15 +144,28 @@ class Misc
     public static function style(?string $text, string $type = 'success'): string
     {
         return match ($type) {
-            'error' => "\033[31m$text \033[0m",
-            'success' => "\033[32m$text \033[0m",
-            'warning' => "\033[33m$text \033[0m",
-            'info' => "\033[36m$text \033[0m",
-            'bold' => "\033[1m$text \033[0m",
-            'italic' => "\033[3m$text \033[0m",
-            'underline' => "\033[4m$text \033[0m",
+            'error' => "\033[31m$text\033[0m",
+            'success' => "\033[32m$text\033[0m",
+            'warning' => "\033[33m$text\033[0m",
+            'info' => "\033[36m$text\033[0m",
+            'bold' => "\033[1m$text\033[0m",
+            'italic' => "\033[3m$text\033[0m",
+            'underline' => "\033[4m$text\033[0m",
             'strikethrough' => "\033[9m$text\033[0m",
             default => $text,
         };
+    }
+
+    /**
+     * styles the given text in italic
+     *
+     * @param   string  $text
+     * @param   string  $type  styleing type
+     *
+     * @return  string  styleed string
+     */
+    public static function italic(?string $text): string
+    {
+        return "\033[3m$text\033[0m";
     }
 }

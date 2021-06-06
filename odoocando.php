@@ -17,7 +17,7 @@ system('clear');
 
 // imports
 require 'vendor/autoload.php';
-require 'services/Helper.php';
+require 'services/helpers.php';
 
 use Main\Main;
 

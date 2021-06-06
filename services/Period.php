@@ -8,50 +8,82 @@ use Chapters\Two;
 
 class Period
 {
+    public const FORMAT_HINT = '(yyyy-mm-dd)';
+    public const FORMAT_INPUT = 'Y-m-d';
+    public const FORMAT_SHOW = 'l, Y-m-d';
+
     public function __construct()
     {
     }
 
-    public static function get_period($debug = null): array
+    /**
+     * 
+     *  public functions
+     * 
+     */
+    public static function get_single_date($debug = null): string
+    {
+        $example = italic(Period::FORMAT_HINT);
+
+        $excluded = my_read(
+            "which day do you want to exclude ? $example",
+        );
+
+        if ($debug) {
+
+            $excluded = $excluded ?: '2021-05-27';
+        }
+
+        try {
+
+            return @Carbon::createFromFormat(Period::FORMAT_INPUT, $excluded)->format(Period::FORMAT_SHOW);
+        } catch (\Throwable $th) {
+
+            my_print(
+                "your input was invalid, please use the correct format: $example",
+                2,
+                false,
+                'warning'
+            );
+            return self::get_single_date('debug:single');
+        }
+    }
+
+    public static function get_period(array $debug = []): array
     {
         $dates = self::get_start_and_end_date($debug);
-
-        // $period = CarbonPeriod::create($dates['start'], $dates['end']);
 
         return [
             'start' => $dates['start'],
             'end' => $dates['end'],
-            // 'carbon' => $period,
-            // 'holidays' => [],
         ];
     }
 
-    private static function get_start_and_end_date($debug = null): array
+    /**
+     * 
+     *  helpers
+     * 
+     */
+    private static function get_start_and_end_date(array $debug = []): array
     {
-        $input_start = my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
-        $input_end = my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
+        $example = italic(Period::FORMAT_HINT);
+        $input_start = my_read("what's the first date? $example");
+        $input_end = my_read(".. and what's the last date? $example");
 
         // ? debug 
-        if ($debug == 'debug:total') {
-            $input_start = '2021-05-03';
-            $input_end = '2021-05-31';
-        }
-        if ($debug == 'debug:holiday') {
-            $input_start = '2021-05-18';
-            $input_end = '2021-05-20';
+        if ($debug && !$input_start && !$input_end) {
+            $input_start = $debug['start'];
+            $input_end = $debug['end'];
         }
         // ? end debug
 
-        while ($result = self::are_invalid_date_inputs($input_start, $input_end)) {
+        if ($result = self::are_invalid_date_inputs($input_start, $input_end)) {
             my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
             my_print("hint: $result");
             my_print("let's try again..");
-            $input_start = my_read("what's the first day you want to fill, e.g. 2020-01-01? ");
-            $input_end = my_read(".. and what's the last day you want to fill, e.g. 2020-01-31? ");
+            return self::get_start_and_end_date($debug);
         }
 
-        // $start = Carbon::createFromFormat('Y-m-d', $input_start);
-        // $end = Carbon::createFromFormat('Y-m-d', $input_end);
         $start = $input_start;
         $end = $input_end;
 
@@ -63,6 +95,8 @@ class Period
 
     private static function are_invalid_date_inputs(string $start, string $end): ?string
     {
+        $example = italic(Period::FORMAT_HINT);
+
         // start or enter not available » try again
         if (!$start || !$end) {
 
@@ -71,13 +105,13 @@ class Period
 
         // start or enter not valid » try again
         try {
-            @Carbon::createFromFormat('Y-m-d', $start);
-            @Carbon::createFromFormat('Y-m-d', $end);
+            @Carbon::createFromFormat(Period::FORMAT_INPUT, $start);
+            @Carbon::createFromFormat(Period::FORMAT_INPUT, $end);
         } catch (\Throwable $th) {
-
-            return style('please enter two valid dates, format: yyyy-mm-dd');
+            
+            return style("please enter two valid dates, format: $example");
         }
-
+        
         // start <= end » try again
         if ($start > $end) {
 
@@ -88,9 +122,10 @@ class Period
         return false;
     }
 
-    public static function show_period(array $period, array $excluded): void
+    public static function show_period(array $period, array $excluded, string $question = ''): void
     {
-        $show_current_period = my_read("do you want to see the period selected so far? (Y/n) ");
+        $example = italic('(Y/n)');
+        $show_current_period = my_read("$question $example");
 
         if ($show_current_period != 'n') {
             $period = CarbonPeriod::create(
@@ -99,27 +134,36 @@ class Period
             );
             foreach ($period as $date) {
 
-                self::print_date($date->format(Two::FORMAT_STORE), $excluded);
+                self::print_date($date, $excluded);
             }
             nl();
         }
     }
 
-    private static function print_date(string $date, $excluded): void
+    public static function show_exclusion(array $period): void
     {
-        if (isset($excluded[$date])) {
+        foreach ($period as $date) {
+            self::print_date(Carbon::createFromFormat(Period::FORMAT_SHOW, $date), null, 'warning');
+        }
+        nl();
+    }
 
-            $reason = $excluded[$date];
+    private static function print_date(Object $date, ?array $excluded = null, ?string $style = null): void
+    {
+        $date_as_stored = $date->format(self::FORMAT_SHOW);
+        if (isset($excluded[$date_as_stored])) {
+
+            $reason = $excluded[$date_as_stored];
 
             match ($reason) {
                 'holiday' =>  my_print(
-                    $date . " ({$reason})",
+                    $date->format(self::FORMAT_SHOW) . " ({$reason})",
                     1,
                     true,
                     'warning'
                 ),
                 default => my_print(
-                    $date . " ({$reason})",
+                    $date->format(self::FORMAT_SHOW) . " ({$reason})",
                     1,
                     true,
                     'error'
@@ -130,10 +174,10 @@ class Period
         }
 
         my_print(
-            $date,
+            $date->format(self::FORMAT_SHOW),
             1,
             true,
-            'info'
+            $style ?: 'info'
         );
     }
 }
