@@ -1,0 +1,13 @@
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.17",
+        "nesbot/carbon": "^2.48"
+    }, 
+    "autoload": {
+        "psr-4": {
+            "Main\\": "main/",
+            "Services\\": "services/",
+            "Chapters\\": "chapters/"
+        }
+    }
+}

@@ -1,5 +1,4 @@
 /vendor
-composer.json
 composer.lock
 timesheet.xlsx
 personal_data.json
