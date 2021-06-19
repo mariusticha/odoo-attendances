@@ -16,8 +16,8 @@
 system('clear');
 
 // imports
-require 'vendor/autoload.php';
-require 'services/helpers.php';
+require "{$_SERVER['HOME']}/projects/odoo-attendances/vendor/autoload.php";
+require "{$_SERVER['HOME']}/projects/odoo-attendances/services/helpers.php";
 
 use Main\Main;
 
