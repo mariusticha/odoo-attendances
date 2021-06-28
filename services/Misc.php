@@ -15,10 +15,11 @@ class Misc
     public static function my_print(string $text, int $new_lines = 2, $indent = false, string $type = ''): void
     {
         $indented_text = $indent ? "    $text" : $text;
+
         print_r(
             $type ?
                 self::style($indented_text, $type) :
-                $text
+                $indented_text
         );
         self::nl($new_lines);
     }
@@ -31,7 +32,7 @@ class Misc
      *
      * @return  void                [return description]
      */
-    public static function my_read(string $text, int $new_lines = 1, bool $indent = true, string $type = ''): string
+    public static function my_read(string $text, int $new_lines = 1, bool $indent = false, string $type = ''): string
     {
         // show question in style
         self::my_print($text, 2, $indent, $type);
@@ -55,7 +56,7 @@ class Misc
     public static function my_switch(string $text, array $options, ?int $debug = null, int $new_lines = 0,): array
     {
         // question
-        self::my_print($text, 2, true);
+        self::my_print($text, 2);
 
         // show options
         $keys = [];

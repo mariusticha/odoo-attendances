@@ -9,7 +9,7 @@ if (!function_exists('my_print')) {
     }
 }
 if (!function_exists('my_read')) {
-    function my_read(string $text, int $new_lines = 1, bool $indent = true, string $type = '')
+    function my_read(string $text, int $new_lines = 1, bool $indent = false, string $type = '')
     {
         return Misc::my_read($text, $new_lines, $indent,  $type);
     }

@@ -12,10 +12,12 @@ class PersonalData
     {
         $example = italic('(Y/n)');
 
+        // check personal data
         $person_correct = my_read(
             "wait.. - {$personal_data['name']} - this is you, right? $example"
         );
 
+        // no » set up new
         if ($person_correct === 'n') {
 
             my_print("d'oh. but no problem, let's set up your personal data again.");
@@ -23,8 +25,10 @@ class PersonalData
             return $this->set_up_personal_data(false);
         }
 
+        // check contract 
         $contract_correct = my_read("... and your contract type is still {$personal_data['contract']['text']}? $example");
 
+        // wrong » set up new
         if ($contract_correct === 'n') {
 
             my_print("d'oh. so let's update your contract.");
@@ -42,7 +46,7 @@ class PersonalData
     public function set_up_personal_data(bool $init = true): array
     {
         if ($init) {
-            
+
             my_print("first of all, let's set up your personal data.");
         }
 
