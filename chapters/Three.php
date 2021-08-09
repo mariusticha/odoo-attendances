@@ -85,6 +85,14 @@ class Three
             return;
         }
 
+        // not yet finished
+        else {
+            my_print(italic("-- under construction --"), 2, false, 'error');
+            my_print(italic("---- this feature is not yet finished ----"), 2, false, 'warning');
+            my_print(italic("-- under construction --"), 1, false, 'error');
+            return;
+        }
+
         my_print("🕒 please note, that you can add a maximum of $percentage% ({$max_overtime}h) to your working hours 🕒", 2, false, 'warning');
 
         $options = array_map(

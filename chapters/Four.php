@@ -27,7 +27,7 @@ class Four
 
         // get working days in period
         $example = italic("(default: {$this->default_timesheet}.xlsx)");
-        $timesheet = my_read("how do you want to name your timesheet $example");
+        $timesheet = my_read("how do you want to name your timesheet? $example");
         if ($timesheet === '') {
             $timesheet = $this->default_timesheet;
         }
