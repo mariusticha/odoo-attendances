@@ -19,6 +19,8 @@ system('clear');
 require "{$_SERVER['HOME']}/projects/odoo-attendances/vendor/autoload.php";
 require "{$_SERVER['HOME']}/projects/odoo-attendances/services/helpers.php";
 
+(new \NunoMaduro\Collision\Provider)->register();
+
 use Main\Main;
 
 // entry point
