@@ -40,12 +40,11 @@ class Three
         // overtime
         $this->add_over_time();
 
-
-        dd(
-            $this->working_days,
-            $this->working_hours,
-            $this->personal_data,
-        );
+        // dd(
+        //     $this->working_days,
+        //     $this->working_hours,
+        //     $this->personal_data,
+        // );
     }
 
     private function get_working_days(): int
@@ -82,7 +81,8 @@ class Three
 
         if ($over_time === 'n') {
 
-            my_print("very well-behaved, let's fill finish your timesheet...");
+            my_print("very well-behaved, let's finish filling your timesheet...");
+            return;
         }
 
         my_print("🕒 please note, that you can add a maximum of $percentage% ({$max_overtime}h) to your working hours 🕒", 2, false, 'warning');

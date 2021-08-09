@@ -5,6 +5,7 @@ namespace Main;
 use Chapters\One;
 use Chapters\Two;
 use Chapters\Three;
+use Chapters\Four;
 
 class Main
 {
@@ -70,6 +71,9 @@ class Main
 
         // chapter three
         (new Three($this->personal_data, $this->periods))->execute();
+
+        // chapter four
+        (new Four($this->personal_data, $this->periods))->execute();
     }
 
     private function intro(): void
