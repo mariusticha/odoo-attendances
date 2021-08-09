@@ -1,7 +1,8 @@
 {
     "require": {
         "phpoffice/phpspreadsheet": "^1.17",
-        "nesbot/carbon": "^2.48"
+        "nesbot/carbon": "^2.48",
+        "nunomaduro/collision": "^5.6"
     }, 
     "autoload": {
         "psr-4": {
