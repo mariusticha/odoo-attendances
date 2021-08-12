@@ -30,30 +30,21 @@ class Three
         // get working days in period
         my_print("let's see how many days you've been working during the whole period: ");
         $this->working_days = $this->get_working_days();
-        my_print($this->working_days, 2, true);
+        my_print($this->working_days, 2, true, 'success');
 
         // hours per day
-        my_print("... and this is a total durance in hours: ");
+        my_print("... and this is the total durance in hours: ");
         $this->working_hours = $this->working_days * 8;
-        my_print($this->working_hours, 2, true);
+        my_print($this->working_hours, 2, true, 'success');
 
         // overtime
         $this->add_over_time();
-
-        // dd(
-        //     $this->working_days,
-        //     $this->working_hours,
-        //     $this->personal_data,
-        // );
     }
 
     private function get_working_days(): int
     {
         // get whole period as carbon object
-        $working_period = CarbonPeriod::create(
-            $this->working_period['start'],
-            $this->working_period['end']
-        );
+        $working_period = Period::get_carbon_period($this->working_period);
 
         $working_days = 0;
         foreach ($working_period as $day) {
@@ -83,27 +74,25 @@ class Three
 
             my_print("very well-behaved, let's finish filling your timesheet...");
             return;
-        }
+        } else {
+            my_print("🕒 please note, that you can add a maximum of $percentage% ({$max_overtime}h) to your working hours 🕒", 2, false, 'warning');
 
-        // not yet finished
-        else {
+            $options = array_map(
+                function ($value) {
+                    return [
+                        'value' => $value,
+                        'text' => abs($value) == 1 ? "$value hour" : "$value hours",
+                    ];
+                },
+                range(-$max_overtime, $max_overtime)
+            );
+            my_switch("how many hours do you want to add?", $options);
+
+            // not yet finished
             my_print(italic("-- under construction --"), 2, false, 'error');
             my_print(italic("---- this feature is not yet finished ----"), 2, false, 'warning');
             my_print(italic("-- under construction --"), 1, false, 'error');
             return;
         }
-
-        my_print("🕒 please note, that you can add a maximum of $percentage% ({$max_overtime}h) to your working hours 🕒", 2, false, 'warning');
-
-        $options = array_map(
-            function ($value) {
-                return [
-                    'value' => $value,
-                    'text' => abs($value) == 1 ? "$value hour" : "$value hours",
-                ];
-            },
-            range(- $max_overtime, $max_overtime)
-        );
-        my_switch("how many hours do you want to add?", $options);
     }
 }

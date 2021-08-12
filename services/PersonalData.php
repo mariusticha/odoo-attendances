@@ -38,7 +38,7 @@ class PersonalData
             $this->store($personal_data);
         }
 
-        my_print("nice, let's go on.");
+        my_print("nice, let's go on.", 2, false, 'success');
 
         return $personal_data;
     }
@@ -62,7 +62,12 @@ class PersonalData
             'contract' => $contract,
         ];
 
-        my_print("nice to meet you $name ({$contract['text']}) 👋");
+        my_print(
+            "nice to meet you $name ({$contract['text']}) 👋",
+            2,
+            false,
+            'success'
+        );
 
         return $this->store($personal_data);
     }
@@ -106,7 +111,12 @@ class PersonalData
         }
 
         file_put_contents('personal_data.json', json_encode($personal_data));
-        my_print("great, your data has been stored for the next session. so, let's move on.");
+        my_print(
+            "great, your data has been stored for the next session. so, let's move on.",
+            2,
+            false,
+            'success'
+        );
 
         return $personal_data;
     }

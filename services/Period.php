@@ -12,10 +12,6 @@ class Period
     public const FORMAT_INPUT = 'Y-m-d';
     public const FORMAT_SHOW = 'l, Y-m-d';
 
-    public function __construct()
-    {
-    }
-
     /**
      * 
      *  public functions
@@ -79,7 +75,8 @@ class Period
 
         if ($result = self::are_invalid_date_inputs($input_start, $input_end)) {
             my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
-            my_print("hint: $result");
+            $hint = style('hint:', 'error');
+            my_print("$hint $result");
             my_print("let's try again..");
             return self::get_start_and_end_date($debug);
         }
@@ -100,26 +97,44 @@ class Period
         // start or enter not available » try again
         if (!$start || !$end) {
 
-            return style('please enter a first day as well as the last day.');
+            return style(
+                'please enter a first day as well as the last day.',
+                'warning'
+            );
         }
 
         // start or enter not valid » try again
         try {
-            @Carbon::createFromFormat(Period::FORMAT_INPUT, $start);
-            @Carbon::createFromFormat(Period::FORMAT_INPUT, $end);
+            $start = Carbon::createFromFormat(Period::FORMAT_INPUT, $start);
+            $end = Carbon::createFromFormat(Period::FORMAT_INPUT, $end);
         } catch (\Throwable $th) {
-            
-            return style("please enter two valid dates, format: $example");
+
+            return style(
+                "please enter two valid dates, format: $example",
+                'warning'
+            );
         }
-        
+
+
+
         // start <= end » try again
         if ($start > $end) {
 
-            return style('please enter a start date that is earlier than the end date');
+            return style(
+                'please enter a start date that is earlier than the end date',
+                'warning'
+            );
         }
 
         // all good
         return false;
+    }
+
+    public static function get_carbon_period($period): CarbonPeriod
+    {
+        $start = Carbon::createFromFormat(Period::FORMAT_INPUT, $period['start']);
+        $end = Carbon::createFromFormat(Period::FORMAT_INPUT, $period['end']);
+        return CarbonPeriod::create($start, $end);
     }
 
     public static function show_period(array $period, array $excluded, string $question = ''): void
@@ -128,11 +143,8 @@ class Period
         $show_current_period = my_read("$question $example");
 
         if ($show_current_period != 'n') {
-            $period = CarbonPeriod::create(
-                $period['start'],
-                $period['end']
-            );
-            foreach ($period as $date) {
+            $showing_period = Period::get_carbon_period($period);
+            foreach ($showing_period as $date) {
 
                 self::print_date($date, $excluded);
             }

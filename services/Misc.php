@@ -93,7 +93,8 @@ class Misc
 
         // print result
         $result = $options[$chosen_key];
-        self::my_print("your choice: {$result['text']}");
+        $styled = style($result['text']);
+        self::my_print("your choice: $styled");
         self::nl($new_lines);
 
         return $result;
