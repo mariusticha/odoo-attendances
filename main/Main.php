@@ -18,7 +18,7 @@ class Main
     private $json;
     private $personal_data = null;
     private $periods;
-    private $debug = false;
+    private $debug = true;
 
     /**
      * 
@@ -91,6 +91,9 @@ class Main
 
         // chapter four
         (new Four($this->personal_data, $this->periods))->execute();
+
+        // bye
+        my_print("thanks and bye", 2, false, 'success');
     }
 
     private function intro(): void

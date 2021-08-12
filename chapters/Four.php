@@ -42,18 +42,17 @@ class Four
         nl(2);
         my_print("## chapter 4 - filling time sheet ##", 2, false, 'info');
 
-        $timesheet_name = $this->getTimeSheetName();
+        $name = $this->getTimeSheetName();
 
         $period = $this->getPeriod();
 
         $this->fillExcel($period);
 
-        $writer = new Xlsx($this->spreadsheet);
-        $writer->save("$timesheet_name.xlsx");
+        $this->storeExcel($name);
 
-        dd(
-            $period,
-        );
+        $this->printPeriod($period);
+
+
     }
 
     private function getTimeSheetName(): string
@@ -122,6 +121,19 @@ class Four
             $this->sheet->setCellValue("D$row", $day['end']);
 
             $row += 1;
+        }
+    }
+
+    private function storeExcel($name): void
+    {
+        $writer = new Xlsx($this->spreadsheet);
+        $writer->save("$name.xlsx");
+    }
+
+    private function printPeriod($period): void
+    {
+        foreach ($period as $day) {
+            my_print("{$day['begin']} - {$day['end']}", 1, false, 'warning');
         }
     }
 }
