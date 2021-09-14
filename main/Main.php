@@ -18,7 +18,7 @@ class Main
     private $json;
     private $personal_data = null;
     private $periods;
-    private $debug = true;
+    private $debug = false;
 
     /**
      * 
