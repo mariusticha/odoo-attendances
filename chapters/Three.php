@@ -2,17 +2,15 @@
 
 namespace Chapters;
 
-use Carbon\CarbonPeriod;
-use Services\LPLib_Feiertage_Connector;
 use Services\Period;
 
 class Three
 {
-    private $personal_data = [];
-    private $working_period = [];
-    private $excluded_period = [];
-    private $working_days = 0;
-    private $working_hours = 0;
+    private array $personal_data = [];
+    private array $working_period = [];
+    private array $excluded_period = [];
+    private int $working_days = 0;
+    private int $working_hours = 0;
 
     public function __construct(array $personal_data, array $periods)
     {

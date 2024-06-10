@@ -2,22 +2,20 @@
 
 namespace Chapters;
 
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use DateInterval;
 use Services\Period;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Four
 {
-    private $personal_data = [];
-    private $working_period = [];
-    private $excluded_period = [];
-    private $default_timesheet = 'timesheet';
-    private $default_break = 0.5;
-    private $spreadsheet = null;
-    private $sheet = null;
+    private array $personal_data = [];
+    private array $working_period = [];
+    private array $excluded_period = [];
+    private string $default_timesheet = 'timesheet';
+    private float $default_break = 0.5;
+    private ?Spreadsheet $spreadsheet = null;
+    private ?Worksheet $sheet = null;
 
     public function __construct(array $personal_data, array $periods)
     {
@@ -51,8 +49,6 @@ class Four
         $this->storeExcel($name);
 
         $this->printPeriod($period);
-
-
     }
 
     private function getTimeSheetName(): string
