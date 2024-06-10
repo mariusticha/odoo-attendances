@@ -10,21 +10,13 @@ use Chapters\Four;
 
 class Main
 {
-    /**
-     *
-     * variables
-     *
-     */
+    //  variables
     private $json;
     private $personal_data = null;
     private $periods;
     private $debug = false;
 
-    /**
-     * 
-     *  public functions
-     *
-     */
+    // public functions
     public function __construct()
     {
         $this->json = @file_get_contents('personal_data.json');
