@@ -13,6 +13,7 @@ class Two
         'start' => '',
         'end' => '',
     ];
+    private LPLib_Feiertage_Connector $feiertageApi;
     private $excluded_period = [];
 
     public function __construct()
@@ -30,8 +31,8 @@ class Two
         my_print("first, let's define the time period you want to fill in... ");
 
         $this->working_period = Period::get_period([
-            'start' => '2021-05-03',
-            'end' => '2021-05-31',
+            'start' => Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT),
+            'end' => Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT),
         ]);
 
         // exclude days without work by default

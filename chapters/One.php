@@ -6,7 +6,9 @@ use Services\PersonalData;
 
 class One
 {
-    public function __construct($personal_data)
+    public ?array $personal_data;
+
+    public function __construct(?array $personal_data)
     {
         $this->personal_data = $personal_data;
     }
