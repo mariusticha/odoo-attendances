@@ -12,11 +12,7 @@ class Period
     public const FORMAT_INPUT = 'Y-m-d';
     public const FORMAT_SHOW = 'l, Y-m-d';
 
-    /**
-     * 
-     *  public functions
-     * 
-     */
+    //  public functions
     public static function get_single_date($debug = null): string
     {
         $example = italic(Period::FORMAT_HINT);
@@ -55,18 +51,15 @@ class Period
         ];
     }
 
-    /**
-     * 
-     *  helpers
-     * 
-     */
+    // helpers
     private static function get_start_and_end_date(array $debug = []): array
     {
-        $example = italic(Period::FORMAT_HINT);
-        $input_start = my_read("what's the first date? $example");
-        $input_end = my_read(".. and what's the last date? $example");
+        $exampleStart = italic(Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT));
+        $exampleEnd = italic(Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT));
+        $input_start = my_read("what's the first date? $exampleStart") ?? Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT);
+        $input_end = my_read(".. and what's the last date? $exampleEnd") ?? Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT);
 
-        // ? debug 
+        // ? debug
         if ($debug && !$input_start && !$input_end) {
             $input_start = $debug['start'];
             $input_end = $debug['end'];
