@@ -174,8 +174,8 @@ class Two
         $excluded = [];
 
         $period_input = Period::get_period([
-            'start' => '2021-05-15',
-            'end' => '2021-05-20',
+            'start' => Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT),
+            'end' => Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT),
         ]);
 
         $period = CarbonPeriod::create(
