@@ -54,10 +54,11 @@ class Period
     // helpers
     private static function get_start_and_end_date(array $debug = []): array
     {
-        $exampleStart = italic(Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT));
-        $exampleEnd = italic(Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT));
-        $input_start = my_read("what's the first date? $exampleStart") ?? Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT);
-        $input_end = my_read(".. and what's the last date? $exampleEnd") ?? Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT);
+        $startOfMonth = Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT);
+        $endOfMonth = Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT);
+
+        $input_start = my_read("what's the first date? " . italic($startOfMonth)) ?? $startOfMonth;
+        $input_end = my_read(".. and what's the last date? " . italic($endOfMonth)) ?? $endOfMonth;
 
         // ? debug
         if ($debug && !$input_start && !$input_end) {
@@ -74,12 +75,9 @@ class Period
             return self::get_start_and_end_date($debug);
         }
 
-        $start = $input_start;
-        $end = $input_end;
-
         return [
-            'start' => $start,
-            'end' => $end,
+            'start' => $input_start,
+            'end' => $input_end,
         ];
     }
 
