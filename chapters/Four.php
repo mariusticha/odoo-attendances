@@ -12,7 +12,7 @@ class Four
     private array $personal_data = [];
     private array $working_period = [];
     private array $excluded_period = [];
-    private string $default_timesheet = 'timesheet';
+    private string $default_timesheet;
     private float $default_break = 0.5;
     private ?Spreadsheet $spreadsheet = null;
     private ?Worksheet $sheet = null;
@@ -22,6 +22,12 @@ class Four
         $this->personal_data = $personal_data;
         $this->working_period = $periods['working_period'];
         $this->excluded_period = $periods['excluded_period'];
+
+        $startDate = $periods['working_period']['start'];
+
+        $endDate = $periods['working_period']['end'];
+
+        $this->default_timesheet = "odoo-{$startDate}-{$endDate}";
 
         // init spreadsheet
         $this->spreadsheet = new Spreadsheet();
@@ -122,8 +128,7 @@ class Four
 
     private function storeExcel($name): void
     {
-        $writer = new Xlsx($this->spreadsheet);
-        $writer->save("$name.xlsx");
+        (new Xlsx($this->spreadsheet))->save("{$name}.xlsx");
     }
 
     private function printPeriod($period): void

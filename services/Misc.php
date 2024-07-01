@@ -67,16 +67,20 @@ class Misc
         }
         self::nl();
 
+        $defaultHint = $debug
+            ? " - default: $debug"
+            : "";
+
         // ask for choice
         $choice = self::my_read(
-            "please choose your option " . italic("(" . implode(', ', $keys) . ")"),
+            "please choose your option " . italic("(" . implode(', ', $keys) . ")" . $defaultHint),
             1,
             false
         );
 
         if (!is_null($debug) && $choice === '') {
 
-            return $options[$debug];
+            return $options[$debug - 1];
         }
 
         $chosen_key = intval($choice) - 1;

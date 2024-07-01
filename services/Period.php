@@ -41,9 +41,12 @@ class Period
         }
     }
 
-    public static function get_period(array $debug = []): array
+    public static function get_period(string $exampleStart, string $exampleEnd): array
     {
-        $dates = self::get_start_and_end_date($debug);
+        $dates = self::get_start_and_end_date(
+            exampleStart: $exampleStart,
+            exampleEnd: $exampleEnd
+        );
 
         return [
             'start' => $dates['start'],
@@ -52,27 +55,17 @@ class Period
     }
 
     // helpers
-    private static function get_start_and_end_date(array $debug = []): array
+    private static function get_start_and_end_date($exampleStart, $exampleEnd): array
     {
-        $startOfMonth = Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT);
-        $endOfMonth = Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT);
-
-        $input_start = my_read("what's the first date? " . italic($startOfMonth)) ?? $startOfMonth;
-        $input_end = my_read(".. and what's the last date? " . italic($endOfMonth)) ?? $endOfMonth;
-
-        // ? debug
-        if ($debug && !$input_start && !$input_end) {
-            $input_start = $debug['start'];
-            $input_end = $debug['end'];
-        }
-        // ? end debug
+        $input_start = my_read("what's the first date? " . italic($exampleStart)) ?: $exampleStart;
+        $input_end = my_read(".. and what's the last date? " . italic($exampleEnd)) ?: $exampleEnd;
 
         if ($result = self::are_invalid_date_inputs($input_start, $input_end)) {
             my_print("❗ there was an error in your dates ❗", 2, false, 'warning');
             $hint = style('hint:', 'error');
             my_print("$hint $result");
             my_print("let's try again..");
-            return self::get_start_and_end_date($debug);
+            return self::get_start_and_end_date($exampleStart, $exampleEnd);
         }
 
         return [

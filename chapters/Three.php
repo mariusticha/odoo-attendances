@@ -36,7 +36,9 @@ class Three
         my_print($this->working_hours, 2, true, 'success');
 
         // overtime
-        $this->add_over_time();
+        // $this->add_over_time();
+        my_print(italic("-- overtime not implemented --"), 2, false, 'error');
+        my_print(italic("---- this feature is under construction. please pr ----"), 2, false, 'warning');
     }
 
     private function get_working_days(): int

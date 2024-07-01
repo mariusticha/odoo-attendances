@@ -30,10 +30,10 @@ class Two
         // get whole period
         my_print("first, let's define the time period you want to fill in... ");
 
-        $this->working_period = Period::get_period([
-            'start' => Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT),
-            'end' => Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT),
-        ]);
+        $this->working_period = Period::get_period(
+            exampleStart: Carbon::now()->startOfWeek()->format(Period::FORMAT_INPUT),
+            exampleEnd: Carbon::now()->endOfWeek()->format(Period::FORMAT_INPUT),
+        );
 
         // exclude days without work by default
         $this->exclude_weekends_and_public_holiday();
@@ -98,8 +98,8 @@ class Two
         $example = italic('(e.g. sick leaves, holidays, etc)');
         // pick holiday type
         $holiday = my_switch(
-            "do you want to exclude any days? $example",
-            [
+            text: "do you want to exclude any days? $example",
+            options: [
                 [
                     'value' => 1,
                     'text' => 'yes, a period of days',
@@ -117,7 +117,8 @@ class Two
                     'text' => 'no',
                 ],
             ],
-            0,
+            debug: 3,
+            new_lines: 0,
         );
 
         while ($holiday['value'] != 3) {
@@ -173,10 +174,10 @@ class Two
     {
         $excluded = [];
 
-        $period_input = Period::get_period([
-            'start' => Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT),
-            'end' => Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT),
-        ]);
+        $period_input = Period::get_period(
+            exampleStart: Carbon::now()->startOfMonth()->format(Period::FORMAT_INPUT),
+            exampleEnd: Carbon::now()->endOfMonth()->format(Period::FORMAT_INPUT),
+        );
 
         $period = CarbonPeriod::create(
             $period_input['start'],
