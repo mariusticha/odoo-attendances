@@ -25,7 +25,7 @@ class PersonalData
             return $this->set_up_personal_data(false);
         }
 
-        // check contract 
+        // check contract
         $contract_correct = my_read("... and your contract type is still {$personal_data['contract']['text']}? $example");
 
         // wrong » set up new
@@ -84,6 +84,10 @@ class PersonalData
                 [
                     'value' => 36,
                     'text' => 'reduced full time /36h',
+                ],
+                [
+                    'value' => 30,
+                    'text' => 'part time /30h',
                 ],
                 [
                     'value' => 20,

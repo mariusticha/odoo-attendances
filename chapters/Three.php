@@ -32,7 +32,8 @@ class Three
 
         // hours per day
         my_print("... and this is the total durance in hours: ");
-        $this->working_hours = $this->working_days * 8;
+        $hoursPerDay = $this->personal_data['contract']['value'] / 5;
+        $this->working_hours = $this->working_days * $hoursPerDay;
         my_print($this->working_hours, 2, true, 'success');
 
         // overtime
