@@ -128,7 +128,7 @@ class Four
 
     private function storeExcel($name): void
     {
-        (new Xlsx($this->spreadsheet))->save("{$name}.xlsx");
+        (new Xlsx($this->spreadsheet))->save($_SERVER['HOME'] . "/Downloads/{$name}.xlsx");
     }
 
     private function printPeriod($period): void
