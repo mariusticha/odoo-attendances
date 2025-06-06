@@ -1,3 +1,4 @@
 /vendor
 *.xlsx
 personal_data.json
+**/.DS_Store
